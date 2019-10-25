@@ -1,39 +1,37 @@
-# node-js-getting-started
+# node-js-Calendar Importer
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+A Node.js web app using [Express 4](http://expressjs.com/) + Front end
 
-This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
+## Prerequisites
+
+You must generate your own google cloud console service account keys and add them into the directory. Furthermore, in index.js, replace the SALT with a random string of characters, add a gmail account to nodemailer and add firebase account details.
 
 ## Running Locally
 
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
+Make sure you have [Node.js](http://nodejs.org/).
 
 ```sh
-$ git clone https://github.com/heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
+$ git clone [this repo]
+$ cd [into the folder]
 $ npm install
-$ npm start
+$ node index.js
 ```
 
 Your app should now be running on [localhost:5000](http://localhost:5000/).
 
-## Deploying to Heroku
+## View Live Version
 
-```
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-or
+Live version can be found here [https://calendarimporter.herokuapp.com/](https://calendarimporter.herokuapp.com/).
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-## Documentation
+## Contributing
+Pull requests are welcome. You are welcome to implement more features. For major changes, please open an issue first to discuss what you would like to change. Contact me for any aadditional info you need.
 
-For more information about using Node.js on Heroku, see these Dev Center articles:
+## Authors
 
-- [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
-- [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
-- [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
+* **Kenneth Kreindler** - *Initial work*
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
