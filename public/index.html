@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Calendar Import</title>
+    <meta name="description" content="With Calendar Importer you can import your student timetable into your gmail calendar.">
+    <meta name="keywords" content="Import, calendar, kings college london, KCL, google, ical">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:400,700'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:500' rel='stylesheet'>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="image_src" href="thumbnail.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.9">
+    
+    <script>
+        // Initialize Firebase
+        // TODO: Replace with your project's customized code snippet
+        var config = {
+        apiKey: "AIzaSyApF5ouRtPWE4mdual6rO9PUsER900Wz5Y",
+        authDomain: "kclcal.firebaseapp.com",
+        databaseURL: "https://kclcal.firebaseio.com/",
+        storageBucket: "kclcal.appspot.com",
+        projectId: "kclcal",
+        };
+        firebase.initializeApp(config);
+    </script>
+</head>
+<!-- <div id="loader" style="width: 0%; height: 5px; background-color: lime"> -->
+
+</div>
+
+<body>
+        <div class="preloader" id="loadingfade">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2"></div>
+                <div class="circle circle-3"></div>
+                <div class="circle circle-4"></div>
+              </div>
+
+    <section class="maincontainersection" style="margin:50px auto;">
+        <div class="sininimportbtn">
+            <ul>
+                <li>
+        <div>
+        <div class="input-inline signinimportbtn"  onclick="togglesignin()">
+            <label style="text-align: center;" id="singinupbtn"><br>Log in / Sign up</label>
+            <br>
+            <h6 style="font-size: 5px;text-align: center; " id="signindetail"></h6>
+        </div>
+        </div>
+    </li>
+    <li>
+        <div>
+        <div class="input-inline signinimportbtn"  onclick="importthisweek()" id="importthisweekbtn" hidden>
+                <label style="text-align: center;" id="importthisweekbtn2"><br>Import Events</label>
+                <br>
+                <h6 style="font-size: 5px;text-align: center; " id="signindetail"></h6>
+        </div>
+        
+        </div>
+        </li>
+    </ul>
+
+     </div>
+        <div class="loginsignup" id="loginsignup" hidden>
+        <ul>
+        <li>
+        <div style="">
+            <h5>Sign in:</h5>
+        <div class="input-inline">
+                <input id="emailsignin" type="text"  autocomplete="on" name="emailsignin" placeholder="Email" required>
+                <label for="test_1">Email</label>
+            </div>
+            <div class="input-inline">
+                <input id="passwordsignin" class="protected" autocomplete="on" name="passwordsignin" type="text"  placeholder="Password" required>
+                <label for="test_1">Password</label>
+            </div>
+            <div style="height: 27px">
+            <label for="agree" > <input id="savlogin" type="checkbox" checked name="checkbox" value="agree" v-model="checked" style="width: 30px"/>Save login</lable>
+            </div>
+                <br>
+            
+            <div class="input-inline" style="height: 50px" onclick="signin()">
+
+                    <label style="text-align: center;" id="singinlbl"><br>Sign in</label>
+                </div>
+        </div>
+        </li>
+        <li>
+        <div style="">
+                <h5>Sign up:</h5>
+                <div class="input-inline">
+                        <input id="emailsignup" type="text"  autocomplete="on" name="emailsignup" placeholder="Email" required>
+                        <label for="test_1">Email</label>
+                    </div>
+                    <div class="input-inline">
+                        <input id="passwordsignup" class="protected" autocomplete="on" name="passwordsignup" type="text"  placeholder="Password" required>
+                        <label for="test_1">Password</label>
+                    </div>
+                    <div class="input-inline">
+                            <input id="passwordsignup2" class="protected" autocomplete="on" name="passwordsignup2" type="text"  placeholder="Confirm password" required>
+                            <label for="test_1">Confirm password</label>
+                        </div>
+                    <br>
+        
+                    <div class="input-inline" style="height: 50px" onclick="signup()">
+        
+                            <label style="text-align: center;" id="signuplbl"><br>Sign up</label>
+                        </div>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+    <h5 style="line-height: 2" id="loginprompt"><u>Please log in or create an account to begin...</u></h5>
+    <div style="height: 10px"></div>
+    <h3 style="line-height: 1"><u><a href="https://docs.google.com/forms/d/e/1FAIpQLSdwBWzIjSVCs1gtJ8SoChKbZ_ky4raO0GsFvvTuFC6v8o8_NQ/viewform?usp=sf_link" target="blank" alt="Give feedback">IN BETA</a></u></h3>
+
+    <h1 style="line-height: 1">Calendar Importer has imported <span class="counter" id="eventcounter">0</span> events.</h1>
+        <div style="height: 20px"></div>
+        <h2>Student Calendar importer</h2>
+
+        <h5 style="line-height: 2">THIS APPLICATION ALLOWS YOU TO IMPORT YOUR STUDENT TIMETABLE INTO GOOGLE CALENDAR AUTOMATICALLY. SCHEDULE IMPORTS EVERY WEEK TO ALWAYS STAY UP TO DATE. WITH THIS YOU CAN SHARE YOUR CALENDAR ACROSS YOUR DEVICES (including apple calendar. See instructions <a href="http://tiny.cc/gcalsub" target="blank">here</a>). LOGIN AND ENTER YOUR DETAILS TO GET STARTED.</h5>
+
+        <div class="inputdata" id="inputdata">
+
+            <div>
+        <h6 style="font-size: 10px;" ><a id="logbtn" href="/logs?uid" target="_blank">View your Logs</a></h6>
+
+                
+        <h2>Google Login</h2>
+        <h5 style="line-height: 2">Click "Log in with Google". Select your google account. Accept the permissions.</h5>
+
+        <div>
+            <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+            <div class="google-btn" id="signingooglebutton">
+                <div class="google-icon-wrapper">
+                    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+                </div>
+                <p class="btn-text" style="width: calc(100% - 40px); margin-right:0px;  text-align:center"><b id="googlelogintext" >Log in with Google</b></p>
+
+            </div>
+        </div>
+        <section class="maincontainersection" style="margin:20px auto;">
+
+            <div class="input-inline" hidden id="tokeninput">
+                <input id="token" type="text"  placeholder="Paste your token here" required>
+                <label for="test_1">Click "Log In with Google" and copy the Token</label>
+            </div>
+            
+
+            <br>
+
+            <h2>King's College London Login</h2>
+            <h5 style="line-height: 2">Enter your Student number and Password to import your calendar.</h5>
+
+            <div class="input-inline">
+                <input id="knumber" type="text"  placeholder="Student ID" required>
+                <label for="test_1">Your Student ID</label>
+            </div>
+            <div class="input-inline">
+                <input id="password" class="protected" type="text"  placeholder="Password" required>
+                <label for="test_1">Your Student ID password</label>
+            </div>
+            <br>
+            <h2>Scheduled Import</h2>
+
+            <div style="background-color: #252423">
+            <div class="dayselectordd" >
+        
+            
+                <div style="width: 200px"><h5  style="margin-left: 10px">Schedule import every: </h5></div>
+                  
+                <div class="containerdropdown">
+                    <div class="dropdown">
+                   <select id="selectDay" class="dropdown-select">
+                   </select>
+                   </div>
+                   
+                   </div> 
+
+            </div>
+            <div class="dayselectordd" >
+                <div style="width: 200px"><h5  style="margin-left: 10px">Number of days: </h5></div>
+
+                <div class="containerdropdown">
+                    <div class="range-slider">
+                        <input class="range-slider__range" id="dayssel" type="range" value="7" min="0" max="30">
+                        <span class="range-slider__value" id="dayssel_num">0</span>
+                      </div>
+                   
+                   </div> 
+
+            </div>
+            <h5 style="text-align: center; line-height:1.5; padding-bottom: 20px; padding: 0,20px,0,20px" id="summarytext">Schedule summary: Every <u id="daylbl">[Day]</u>, import the next <u id="numlbl">[Amount Of Days]</u> days.</h5>
+
+            </div>
+            <br>
+            <div style="height: 20px">
+                    <label for="agree" > <input id="duplicateevents" type="checkbox" checked name="checkbox" value="agree" v-model="checked" style="width: 30px"/>Do not import duplicate events. <a id="forgetimportedevents">Click here to forget imported events.</a></lable>
+                    </div>
+        </div>
+        </div>
+        
+        <div id="hidebtns">
+            <div class="input-inline" style="height: 50px"  id="savebtn" hidden>
+
+                    <label style="text-align: center;" id="save"  ><br>Save</label>
+                </div>
+                <div class="input-inline" style="height: 50px"  id="cancelbtn" hidden>
+
+                        <label style="text-align: center;" id="cancel"  ><br>Cancel</label>
+                    </div>
+                <div class="input-inline" style="height: 50px"  id="editbtn" hidden>
+
+                        <label style="text-align: center;" id="edit"  ><br>Edit data for: </label>
+                    </div>
+            <div class="input-inline" style="height: 50px" id="importbtn">
+
+                <label style="text-align: center;" id="import"><br>Import Events (next <u id="numlbl2">[Amount Of Days]</u> days)</label>
+            </div>
+            <input id="gloginurl" hidden>
+
+        </div>
+        <h6 style="font-size: 8px;text-align: center; " >Your student id and Password are encrypted with 'aes-256-ctr' in our secured database. Event data is hashed using 'md5'. We do not store Google Login information.</h6>
+        <h6 style="font-size: 10px;text-align: center; " ><a href="/priv.html">View our privacy policy. We place the highest priority on ensuring your data is secured.</a></h6>
+
+        
+        </section>
+
+        <script>
+
+            function checkhttps(){
+                if (location.protocol === 'http:' && (window.location.href.includes("calendarimporter"))){
+                    window.location.href = 'https://calendarimporter.herokuapp.com';
+                }
+            }
+            checkhttps()
+ 
+            $('.inputdata input').keyup(function() {
+                savebuttoncol()
+            });
+
+            $('#duplicateevents').mousedown(function() {
+                savebuttoncol()
+            });
+
+            $("#selectDay").change(function () {
+                savebuttoncol()
+            });
+
+            $("input").change(function () {
+                savebuttoncol()
+            });
+
+            
+
+            function savebuttoncol(){
+                document.getElementById("save").style.backgroundColor = "#1e824c"
+                        document.getElementById("cancel").style.backgroundColor = "#c0392b"
+            }
+
+            //document.getElementById("daylbl").innerHTML=
+
+            const dayssel = document.getElementById("dayssel");
+
+            dayssel.addEventListener('change', (event) => {
+                document.getElementById("numlbl").innerHTML=document.getElementById("dayssel").value
+
+
+            });
+
+        
+            $('select').on('change', function() {
+                summarytext.hidden = false
+                document.getElementById("daylbl").innerHTML= document.querySelector('select option[value="'+document.getElementById("selectDay").value+'"]').innerHTML  
+                if (document.getElementById("daylbl").innerHTML == "Off"){
+                    summarytext.hidden = true
+                }
+
+                });
+            
+
+            function togglesignin(){
+                if(!document.getElementById("loginsignup").value){
+                    document.getElementById("loginsignup").hidden = !document.getElementById("loginsignup").hidden
+                }
+                else{
+                    firebase.auth().signOut()
+                    document.getElementById("googlelogintext").innerHTML="Log in with Google"
+                    checklogin()
+                }
+                
+            }
+
+
+            
+            document.getElementById("signingooglebutton").onclick = function googlesignin() {
+                if(document.getElementById("googlelogintext").innerHTML=="Sign out"){
+                    document.getElementById("googlelogintext").innerHTML="Log in with Google"
+                    document.getElementById("token").value = ""
+                    
+                    $.ajax({
+                            url: '/getrefresh',
+                            data: {
+                                uid:uid,
+                                token:null 
+                            }
+                        }).done(function(data) {
+                            checkifgooglesignedin()
+                        }) 
+                    return
+                }
+
+                
+                
+
+                $.ajax({
+                    url: '/googleoauth',
+                    data: {}
+                }).done(function(data) {
+                    var response = data.response;
+                    if (response) {
+                        //document.getElementById("tokeninput").hidden = false
+
+                        url = data.url;
+                        document.getElementById("gloginurl").value= url
+                        window.location.href = url;
+                    } else {
+                        alert("Error")
+                    }
+                })
+            }
+
+            function getQueryVariable(variable)
+                {
+                    var query = window.location.search.substring(1);
+                    var vars = query.split("&");
+                    for (var i=0;i<vars.length;i++) {
+                            var pair = vars[i].split("=");
+                            if(pair[0] == variable){return pair[1];}
+                    }
+                    return(false);
+                }
+
+            function checkifgcode(){
+                gtoken = getQueryVariable("code")
+                if(!gtoken){
+
+                }
+                else{
+                    
+                    //document.getElementById("tokeninput").hidden = false
+                    document.getElementById("token").value=gtoken
+                    var user = firebase.auth().currentUser;
+                    console.log(gtoken)
+                    uid = user.uid;
+                    token = document.getElementById("token").value
+                        $.ajax({
+                            url: '/getrefresh',
+                            data: {
+                                uid:uid,
+                                token:token
+                            }
+                        }).done(function(data) {
+                            if(!data.response){
+                                alert(data.message)
+                                window.open('https://myaccount.google.com/permissions', '_blank')
+                                history.pushState({}, null, window.location.pathname);
+
+                                return
+                            }
+                            history.pushState({}, null, window.location.pathname);
+                            checkifgooglesignedin()
+                        })
+
+                }
+            }
+
+            function checkifgooglesignedin(){
+                var user = firebase.auth().currentUser;
+                if (user != null){
+                    uid = user.uid;
+                    $.ajax({
+                            url: '/gotrefresh',
+                            data: {
+                                uid:uid,
+                            }
+                        }).done(function(data) {
+                            if(data.response){
+                            document.getElementById("googlelogintext").innerHTML="Sign out"
+                            
+                            }
+                            else{
+                                document.getElementById("googlelogintext").innerHTML="Log in with Google"
+                            }
+
+                        })
+                    }
+
+            }
+
+            
+            document.getElementById("forgetimportedevents").onclick = function forgetimported(){
+                toggleloading(true)
+                if(confirm("Are you sure you would like to forget imported events? This may result in duplicate entries in your calendar.")){
+                var user = firebase.auth().currentUser;
+                uid = user.uid;
+                $.ajax({
+                    url: '/cleareventdata',
+                    data: {
+                        uid:uid  
+                    }
+                }).done(function(data) {
+                    toggleloading(false)
+                    alert(data.message)
+                })
+                }
+                else{
+                    toggleloading(false)
+
+                }
+            }
+
+
+            document.getElementById("savebtn").onclick = function btnclick(){save()}
+            document.getElementById("cancelbtn").onclick = function cancelbtnclick(){
+                document.getElementById("save").style.backgroundColor = "rgb(37, 36, 35)"
+                document.getElementById("cancel").style.backgroundColor = "rgb(37, 36, 35)"
+                    //document.getElementById("tokeninput").hidden = true
+                    document.getElementById("inputdata").hidden = true;
+                    document.getElementById("editbtn").hidden = false;
+                    document.getElementById("savebtn").hidden = true;
+                    document.getElementById("cancelbtn").hidden = true;
+                    getdata(false)
+                    checkifgooglesignedin()
+            }
+
+            document.getElementById("editbtn").onclick = function editbtnclick(){
+                
+                        //document.getElementById("tokeninput").hidden = false
+                        document.getElementById("inputdata").hidden = false;
+                        document.getElementById("editbtn").hidden = true;
+                        document.getElementById("savebtn").hidden = false;
+                        document.getElementById("cancelbtn").hidden = false;
+
+
+            }
+
+            document.getElementById("importthisweekbtn").onclick = function importthisweek(){startimport()}
+
+            document.getElementById("importbtn").onclick = function importbtn(){startimport()}
+            
+            function startimport() {
+                toggleloading(true)
+
+                token = document.getElementById("token").value
+                knumber = document.getElementById("knumber").value
+                password = document.getElementById("password").value
+                url = document.getElementById("gloginurl").value
+                var user = firebase.auth().currentUser;
+                uid = user.uid;
+                $.ajax({
+                    url: '/import',
+                    data: {
+                        uid:uid,   
+                    }
+                }).done(function(data) {
+                    toggleloading(false)
+                    alert(data.message)
+                    location.reload()
+
+                })
+            }
+
+            function save(){
+                toggleloading(true)
+                token = document.getElementById("token").value
+                knumber = document.getElementById("knumber").value
+                password = document.getElementById("password").value
+                var user = firebase.auth().currentUser;
+                url = document.getElementById("gloginurl").value
+                duplicateevents =  document.getElementById("duplicateevents").checked
+                day = document.getElementById("selectDay").value 
+                uid = user.uid;
+                num_days = document.getElementById("dayssel").value
+                //if(knumber==""||password==""){
+                //    alert("Please enter your Knumber and Password")
+                //    toggleloading(false)
+                //    return
+                //}
+                
+                $.ajax({
+                    url: '/save',
+                    data: {
+                        uid:uid,
+                        token:token,
+                        knumber:knumber,
+                        password:password,
+                        url:url,
+                        duplicateevents:duplicateevents,
+                        schedule:day,
+                        num_days:num_days
+                    }
+                }).done(function(data) {
+                    toggleloading(false)
+                    var response = data.response;
+                     document.getElementById("save").style.backgroundColor = "rgb(37, 36, 35)"
+                     document.getElementById("cancel").style.backgroundColor = "rgb(37, 36, 35)"
+                    // //document.getElementById("tokeninput").hidden = true
+                    // document.getElementById("inputdata").hidden = true;
+                    // document.getElementById("editbtn").hidden = false;
+                    // document.getElementById("savebtn").hidden = true;
+                    // document.getElementById("cancelbtn").hidden = true;
+
+                    getdata(false)
+                    checkifgooglesignedin()
+
+                    if (response) {
+
+                    } else {
+                        alert("Error")
+                    }
+                })
+            }
+
+           function unloadPage() {
+                if(document.getElementById("save").style.backgroundColor == "rgb(30, 130, 76)"){
+                    return "Changes that you made may not be saved.";
+                }
+            };
+
+
+            window.onbeforeunload = unloadPage;
+
+            function signup(){
+                toggleloading(true)
+                passwordsignup = document.getElementById("passwordsignup").value
+                passwordsignup2 = document.getElementById("passwordsignup2").value
+                emailsignup = document.getElementById("emailsignup").value
+                firebase.auth().createUserWithEmailAndPassword(emailsignup, passwordsignup)
+                     .then(function(user){
+                        firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+                            toggleloading(false)
+                            console.log(idToken)
+                            checklogin()
+                     })
+                    })
+            }
+
+            function loadloginsaved(){
+                try{
+                document.getElementById("emailsignin").value=getCookie("email")
+                //document.getElementById("passwordsignin").value=getCookie("password")
+                }
+                catch(error){
+
+                }
+            }
+            
+
+            function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+            }
+
+            function signin(){
+                toggleloading(true)
+                emailsignin = document.getElementById("emailsignin").value
+                passwordsignin = document.getElementById("passwordsignin").value
+                savlogin = document.getElementById("savlogin").checked
+                if(savlogin){
+                    document.cookie = "email="+emailsignin;
+                    //document.cookie = "password="+passwordsignin;
+                }
+                else{
+                    document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = "password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                }
+                
+                firebase.auth().signInWithEmailAndPassword(emailsignin, passwordsignin).then(function() {
+                    getdata()
+                    checkifgooglesignedin()
+                    checklogin()
+                    toggleloading(false)
+                }).catch(function(error) {
+                    toggleloading(false)
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                alert(errorMessage)
+                // ...
+                });
+            }
+
+            function checklogin(){
+                firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+
+                    document.getElementById("loginsignup").value = true
+                    document.getElementById("singinupbtn").innerHTML = "<br>Sign out"
+                    document.getElementById("loginsignup").hidden = true
+                    document.getElementById("importthisweekbtn").hidden = false
+                    document.getElementById("savebtn").hidden = false
+                    document.getElementById("cancelbtn").hidden = false;
+                    document.getElementById("hidebtns").hidden = false;
+
+                    document.getElementById("inputdata").hidden = false;
+                    
+                    document.getElementById("loginprompt").hidden = true;
+
+                    var user = firebase.auth().currentUser;
+                    
+                    document.getElementById("logbtn").href = "/logs?uid="+user.uid;
+                    email = user.email;
+                    document.getElementById("signindetail").innerHTML = email;
+                    document.getElementById("save").style.backgroundColor = "rgb(37, 36, 35)"
+                    document.getElementById("cancel").style.backgroundColor = "rgb(37, 36, 35)"
+                    checkifgooglesignedin()
+
+
+
+                    
+                } else {
+                    document.getElementById("savebtn").hidden = true
+                    document.getElementById("cancelbtn").hidden = true;
+                    document.getElementById("loginprompt").hidden = false;
+
+                    document.getElementById("importthisweekbtn").hidden = true
+                    token = document.getElementById("token").value = ""
+                    knumber = document.getElementById("knumber").value = ""
+                    password = document.getElementById("password").value= ""
+                    document.getElementById("loginsignup").value = false
+                    document.getElementById("singinupbtn").innerHTML = "<br>Log in / Sign up"
+                    document.getElementById("signindetail").innerHTML = "";
+                    //document.getElementById("tokeninput").hidden = false
+                    
+                    document.getElementById("hidebtns").hidden = true;
+
+                    document.getElementById("inputdata").hidden = true;
+                    document.getElementById("editbtn").hidden = true;
+
+
+
+                    // No user is signed in.
+                }
+                
+                });
+            }
+            
+            function getdata(bool){
+                toggleloading(true)
+                firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    var user = firebase.auth().currentUser;
+                    uid = user.uid;
+                    $.ajax({
+                    url: '/getdata',
+                    data: {
+                        uid:uid
+                        
+                    }
+                }).done(function(data) {
+                    toggleloading(false)
+
+                    var response = data.response;
+                    if (response) {
+                        if(data.knumber!=""){
+
+                        document.getElementById("knumber").value = data.knumber
+                        document.getElementById("selectDay").value = data.scheduledays
+                        document.getElementById("daylbl").innerHTML= document.querySelector('select option[value="'+data.scheduledays+'"]').innerHTML 
+                        if (document.getElementById("daylbl").innerHTML == "Off"){
+                        summarytext.hidden = true
+                        } 
+                        document.getElementById("dayssel").value = data.num_days  
+                        document.getElementById("dayssel_num").innerHTML = data.num_days  
+                        document.getElementById("numlbl").innerHTML = data.num_days
+                        document.getElementById("numlbl2").innerHTML = data.num_days
+
+                        document.getElementById("edit").innerHTML = "<br>Edit data for: "+data.knumber;
+                        var duplicateeventsbool = (data.duplicateevents == 'true');
+                        document.getElementById("duplicateevents").checked = duplicateeventsbool;
+
+                        //document.getElementById("tokeninput").hidden = false
+                        if(bool){
+                        document.getElementById("inputdata").hidden = true;
+                        document.getElementById("editbtn").hidden = false;
+                        document.getElementById("savebtn").hidden = true;
+                        document.getElementById("cancelbtn").hidden = true;
+                        }
+                        }
+                        else{
+                            document.getElementById("edit").innerHTML = "<br>Edit"+data.knumber;
+
+                        }
+
+                        checkifgcode()
+
+                    } else {
+                        alert("Error")
+                    }
+                })
+
+                }
+                else{
+                    toggleloading(false)
+
+                }
+            })
+            }
+            
+            function fadeout(){
+                $("#loadingfade").fadeOut('fast');
+
+            }
+            
+            function toggleloading(loadershowing){
+                if(!loadershowing){
+                    $("#loadingfade").fadeOut();
+                }
+                else{
+                    $("#loadingfade").fadeIn();     
+                }
+                loadershowing = !loadershowing
+            }
+
+            var select = document.getElementById("selectDay");
+                var options = ["Monday","Tuesday","Wednsday","Thursday","Friday","Saturday",
+                "Sunday"];
+                var opt = "Off";
+                var el = document.createElement("option");
+                el.textContent = opt;
+                el.value = "Off";
+                select.appendChild(el);
+
+                for(var i = 0; i < options.length; i++) {
+                    var opt = options[i];
+                    var el = document.createElement("option");
+                    el.textContent = opt;
+                    el.value = i;
+                    select.appendChild(el);
+                }
+
+            
+
+            window.onload = checklogin();
+            window.onload = getdata(true);
+            window.onload = loadloginsaved()
+            window.onload = fadeout()
+            var delayInMilliseconds = 1000; //1 second
+            setTimeout(function() {
+                checkifgooglesignedin();
+            }, delayInMilliseconds);
+
+
+
+
+
+        </script>
+
+<script>
+        titlearraycounter = 0; // set to 0
+        const initialtitle = document.title; // save original title
+        
+        //to edit
+        time_ms = 6000; // ms between switching text
+        titlearray = ["📅 Calendar Import","Calendar Import"] // Text to loop through
+        
+        setInterval( checkFocus, time_ms );
+        function checkFocus() {
+          if ( document.hasFocus() ) {
+            titlearraycounter = 0;
+            document.title = initialtitle;
+          } else {
+            if (document.querySelector('.site-header__cart-bubble--visible') !== null || 1 == 1) {
+                titleanimation()
+            }
+          }
+        }
+        function titleanimation(){
+            if(titlearraycounter > titlearray.length-1){
+                titlearraycounter = 0;
+            }
+            document.title = titlearray[titlearraycounter];
+            titlearraycounter++
+        }
+        
+        
+       
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.5/waypoints.min.js"></script>
+        <script src="js/jquery.counterup.min.js"></script>
+        <script>
+
+        function getImportMetric(){
+                $.ajax({
+                            url: '/importmetric',
+                        }).done(function(data) {
+                            var metric = data.metric;
+                            document.getElementById("eventcounter").innerHTML=metric
+                            $('.counter').counterUp({
+                                delay: 10,
+                                time: 2000
+                            });
+                        }) 
+
+                }
+        window.onload = function () { setTimeout(function() {getImportMetric()}, 500);}
+        
+        var rangeSlider = function(){
+            var slider = $('.range-slider'),
+                range = $('.range-slider__range'),
+                value = $('.range-slider__value');
+                
+            slider.each(function(){
+
+                value.each(function(){
+                var value = $(this).prev().attr('value');
+                $(this).html(value);
+
+                });
+
+                range.on('input', function(){
+                $(this).next(value).html(this.value);
+
+                });
+            });
+            };
+
+            rangeSlider();
+</script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-71866858-6"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-71866858-6');
+        </script>
+
+</body>
+
+</html>
