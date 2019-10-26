@@ -23,6 +23,7 @@ Your app should now be running on [localhost:5000](http://localhost:5000/).
 
 A live version can be found here [https://calendarimporter.herokuapp.com/](https://calendarimporter.herokuapp.com/).
 
+![Preview](https://i.ibb.co/GkGKgtj/Screenshot-2019-10-26-at-12-11-58.png)
 
 ## Contributing
 Pull requests are welcome. You are welcome to implement more features. For major changes, please open an issue first to discuss what you would like to change. Contact me for any additional info you need.
