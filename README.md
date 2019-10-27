@@ -19,6 +19,9 @@ $ node index.js
 
 Your app should now be running on [localhost:5000](http://localhost:5000/).
 
+## Video
+[![Watch the video](https://img.youtube.com/vi/U-Mo8zp8Q10/maxresdefault.jpg)](https://youtu.be/U-Mo8zp8Q10)
+
 ## View Live Version
 
 A live version can be found here [https://calendarimporter.herokuapp.com/](https://calendarimporter.herokuapp.com/).
