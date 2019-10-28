@@ -1,8 +1,10 @@
-# node-js-Calendar Importer
+# node-js-Student Calendar Importer
 
 A Node.js web app using [Express 4](http://expressjs.com/) + Front end
 
 ## Prerequisites
+
+Currently only works for KCL
 
 You must generate your google cloud console service account keys and add them to the directory. Furthermore, in index.js, replace the SALT with a random string of characters, add a Gmail account to nodemailer and add firebase account details.
 
