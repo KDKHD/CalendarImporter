@@ -21,7 +21,7 @@
     "request": "^2.88.0",
     "webpack": "^4.36.1",
     "xml-js": "^1.6.11",
-    "xmldom": "^0.1.27"
+    "xmldom": "^0.5.0"
   },
   "devDependencies": {
     "gulp-responsive": "^2.11.0",
